@@ -22,6 +22,11 @@
     "inlineSourceMap": true,
     "importHelpers": true
   },
+  "include": [
+    "app/**/*.ts",
+    "typings/**/*.ts",
+    "config/**/*.ts",
+  ],
   "exclude": [
     "app/public",
     "app/views",
