@@ -1,56 +1,54 @@
-import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
+import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg'
 
 export default (appInfo: EggAppInfo) => {
-  const config = {} as PowerPartial<EggAppConfig>;
+	const config = {} as PowerPartial<EggAppConfig>
 
-  // override config from framework / plugin
-  // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1655368128862_7352';
+	// override config from framework / plugin
+	// use for cookie sign key, should change to your own and keep security
+	config.keys = appInfo.name + '_1655368128862_7352'
 
-  // add your egg config in here
-  config.middleware = [ 'errorHandler' ];
-  // config.errorHandler = {
-  //   match: '/api',
-  // };
+	// add your egg config in here
+	config.middleware = ['errorHandler']
+	// config.errorHandler = {
+	//   match: '/api',
+	// };
 
-  // add your special config in here
-  const bizConfig = {
-    sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
-  };
+	// add your special config in here
+	const bizConfig = {
+		sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`
+	}
 
+	config.mysql = {
+		// 单数据库信息配置
+		client: {
+			// host
+			host: 'localhost',
+			// 端口号
+			port: '3306',
+			// 用户名
+			user: 'root',
+			// 密码
+			password: '123456a',
+			// 数据库名
+			database: 'mzc_portal'
+		},
+		// 是否加载到 app 上，默认开启
+		app: true,
+		// 是否加载到 agent 上，默认关闭
+		agent: false
+	}
 
-  config.mysql = {
-    // 单数据库信息配置
-    client: {
-      // host
-      host: 'localhost',
-      // 端口号
-      port: '3306',
-      // 用户名
-      user: 'root',
-      // 密码
-      password: '123456a',
-      // 数据库名
-      database: 'mzc_portal',
-    },
-    // 是否加载到 app 上，默认开启
-    app: true,
-    // 是否加载到 agent 上，默认关闭
-    agent: false,
-  };
+	config.view = {
+		defaultViewEngine: 'nunjucks',
+		mapping: {
+			'.tpl': 'nunjucks'
+		}
+	}
 
-  config.view = {
-    defaultViewEngine: 'nunjucks',
-    mapping: {
-      '.tpl': 'nunjucks',
-    },
-  };
-
-
-  config.validate = {};
-  // the return config will combines to EggAppConfig
-  return {
-    ...config,
-    ...bizConfig,
-  };
-};
+	config.validate = {}
+	// the return config will combines to EggAppConfig
+	return {
+		...config,
+		...bizConfig
+	}
+}
