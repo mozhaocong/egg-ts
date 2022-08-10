@@ -5,4 +5,5 @@ export default (app: Application) => {
 	router.get('/', controller.home.index)
 	router.get('/user/findAll', controller.user.findAll)
 	router.get('/user/findParams', controller.user.findParams)
+	router.post('/user/create', controller.user.create)
 }

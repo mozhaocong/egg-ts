@@ -1,10 +1,10 @@
 import BaseController from '../core/Base'
 import { pick } from 'ramda'
 export const findParamsRule = {
-	id: { type: 'number', required: false },
-	name: { type: 'string', required: false },
-	age: { type: 'number', required: false },
-	date: { type: 'date', required: false }
+	// id: { type: 'number', required: false },
+	name: { type: 'string', required: true },
+	age: { type: 'number', required: false }
+	// date: { type: 'date', required: false }
 }
 
 function setSearchRule(item) {
@@ -38,8 +38,18 @@ export default class HomeController extends BaseController {
 	public async findParams() {
 		const { ctx, success } = this
 		console.log('Sequelize1', ctx.Sequelize)
-		ctx.validate(findParamsRule, ctx.request.query)
+		ctx.validate(findSearchParamsRule, ctx.request.query)
 		const data = await ctx.service.mySql.findParams()
+		success(data)
+	}
+
+	public async create() {
+		const { ctx, success } = this
+		const { name } = ctx.request.body
+		console.log(typeof name)
+		console.log('findParamsRule', findParamsRule, ctx.request.body)
+		ctx.validate(findParamsRule, ctx.request.body)
+		const data = await ctx.service.mySql.create()
 		success(data)
 	}
 }

@@ -21,7 +21,13 @@ export default class UserService extends Service {
 		return { ctx }
 	}
 	async create() {
-		const user = await this.app.model.User.create({ name: '张三', age: 20 })
+		const data = {}
+		const { ctx } = this
+		const { body } = ctx.request
+		objectRepeatObject(body, findSearchParamsRule, (key, a) => {
+			data[key] = a
+		})
+		const user = await this.app.model.User.create(data)
 		return user
 	}
 }
