@@ -6,6 +6,10 @@ const plugin: EggPlugin = {
 		enable: true,
 		package: 'egg-view-nunjucks'
 	},
+	cors: {
+		enable: true,
+		package: 'egg-cors'
+	},
 	validate: {
 		enable: true,
 		package: 'egg-validate'
@@ -13,6 +17,10 @@ const plugin: EggPlugin = {
 	mysql: {
 		enable: true,
 		package: 'egg-mysql'
+	},
+	sequelize: {
+		enable: true,
+		package: 'egg-sequelize'
 	}
 }
 

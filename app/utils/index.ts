@@ -8,7 +8,8 @@ import {
 	setArrayData,
 	setObjetToObject,
 	setArrayFilter,
-	deepClone
+	deepClone,
+	objectRepeatObject
 } from './model/public/data'
 import { isString, isObject, isArray, isFunction, isNumber, isTrue } from './model/public/typeJudgment'
 
@@ -29,5 +30,6 @@ export {
 	isFunction,
 	deepClone,
 	isString,
-	isNumber
+	isNumber,
+	objectRepeatObject
 }

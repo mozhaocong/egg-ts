@@ -1,4 +1,4 @@
-import { isNil } from 'ramda'
+import { isNil, has } from 'ramda'
 import { isTrue } from './typeJudgment'
 
 export function ObjectToArray(object: ObjectMap) {
@@ -106,4 +106,16 @@ export function deepClone(source: any) {
 export function ArrayObjectIncludes(data: ObjectMap[], key: string, item: string) {
 	if (!isTrue(data)) return false
 	return data.map((item) => item[key]).includes(item)
+}
+
+export function objectRepeatObject(
+	itemA: ObjectMap,
+	itemB: ObjectMap,
+	callback: (key: string, a: any, b: any) => void
+): void {
+	for (const itemAKey in itemA) {
+		if (has(itemAKey, itemB)) {
+			callback(itemAKey, itemA[itemAKey], itemB[itemAKey])
+		}
+	}
 }

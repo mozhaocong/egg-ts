@@ -22,12 +22,17 @@
     "clean": "ets clean"
   },
   "dependencies": {
+    "dayjs": "^1.11.4",
     "egg": "^2.6.1",
+    "egg-cors": "^2.2.3",
     "egg-mysql": "^3.1.1",
     "egg-scripts": "^2.6.0",
+    "egg-sequelize": "^6.0.0",
     "egg-validate": "^2.0.2",
     "egg-view-nunjucks": "^2.3.0",
-    "ramda": "^0.28.0"
+    "mysql2": "^2.3.3",
+    "ramda": "^0.28.0",
+    "sequelize-cli": "^6.4.1"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.40",
