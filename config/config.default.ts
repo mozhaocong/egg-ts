@@ -60,7 +60,7 @@ export default (appInfo: EggAppInfo) => {
 	}
 
 	config.validate = {
-		convert: true
+		// convert: true
 	}
 	// the return config will combines to EggAppConfig
 	return {

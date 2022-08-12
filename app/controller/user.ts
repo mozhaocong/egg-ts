@@ -38,13 +38,14 @@ export default class HomeController extends BaseController {
 	public async findParams() {
 		const { ctx, success } = this
 		console.log('Sequelize1', ctx.Sequelize)
-		ctx.validate(findSearchParamsRule, ctx.request.query)
+		// ctx.validate(findSearchParamsRule, ctx.request.query)
 		const data = await ctx.service.mySql.findParams()
 		success(data)
 	}
 
 	public async create() {
 		const { ctx, success } = this
+		// console.log('ctx', ctx)
 		const { name } = ctx.request.body
 		console.log(typeof name)
 		console.log('findParamsRule', findParamsRule, ctx.request.body)
