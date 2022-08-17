@@ -1,24 +1,8 @@
-import { Service } from 'egg'
+// import { Service } from 'egg'
+import BaseService from '../core/Service'
 import { objectRepeatObject } from '../utils'
-import { findSearchParamsRule } from '../controller/user'
 
-async function modelFindAll(item: any, config = {}, paginationData = { page: 1, size: 10 }, isCount = true) {
-	const data = await item.findAll({
-		offset: paginationData.page - 1 ?? 0,
-		limit: paginationData.size,
-		...config
-	})
-	let count = 0
-	if (isCount) {
-		count = await item.count({
-			...config
-		})
-	}
-
-	return { list: data, pagination: { count: count } }
-}
-
-export default class UserService extends Service {
+export default class UserService extends BaseService {
 	async findAll() {
 		// 假如 我们拿到用户 id 从数据库获取用户详细信息
 		// const user = await this.app.mysql.get('router_management', { name: '111' })
@@ -26,30 +10,23 @@ export default class UserService extends Service {
 		const user = await this.app.model.User.findAll()
 		return { user }
 	}
-	async findParams() {
-		const { ctx } = this
+	async findParams(findSearchParamsRule) {
+		const { ctx, modelFindAll, getDefaultPaginationData } = this
 		const { query } = ctx.request
+		const paginationData = getDefaultPaginationData(query)
 		const data = {}
-		const defPaginationData = { page: 1, size: 10 }
-		const paginationData: any = {}
-		objectRepeatObject(defPaginationData, { ...defPaginationData, ...query }, (key, a, b) => {
-			paginationData[key] = b * 1
-			return a
-		})
-
-		console.log('paginationData', paginationData)
 		objectRepeatObject(query, findSearchParamsRule, (key, a) => {
 			data[key] = a
 		})
-
+		console.trace('data', data)
 		const returnData = await modelFindAll(this.app.model.User, { where: { ...data } }, paginationData)
 		return returnData
 	}
-	async create() {
+	async create(pramsRules) {
 		const data = {}
 		const { ctx } = this
 		const { body } = ctx.request
-		objectRepeatObject(body, findSearchParamsRule, (key, a) => {
+		objectRepeatObject(body, pramsRules, (key, a) => {
 			data[key] = a
 		})
 		const user = await this.app.model.User.create(data)

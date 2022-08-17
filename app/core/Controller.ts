@@ -1,6 +1,9 @@
 import { Controller } from 'egg'
+import { searchValidate, setSearchRule } from '../utils/model/business'
 
 export default class BaseController extends Controller {
+	searchValidate = searchValidate
+	setSearchRule = setSearchRule
 	success = (data) => {
 		//成功返回
 		this.ctx.body = {
