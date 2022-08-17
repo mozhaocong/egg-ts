@@ -19,6 +19,8 @@ import 'egg-cors';
 import 'egg-validate';
 import 'egg-mysql';
 import 'egg-sequelize';
+import 'egg-jwt';
+import 'egg-redis';
 import { EggPluginItem } from 'egg';
 declare module 'egg' {
   interface EggPlugin {
@@ -39,5 +41,7 @@ declare module 'egg' {
     validate?: EggPluginItem;
     mysql?: EggPluginItem;
     sequelize?: EggPluginItem;
+    jwt?: EggPluginItem;
+    redis?: EggPluginItem;
   }
 }

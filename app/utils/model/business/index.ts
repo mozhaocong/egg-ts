@@ -33,9 +33,11 @@ export function getDefaultPaginationData(query, defData = {}) {
 }
 
 export async function modelFindAll(item: any, config = {}, paginationData = { page: 1, size: 10 }, isCount = true) {
+	const offset = (paginationData.page * 1 - 1 ?? 0) * (paginationData.size * 1)
+	console.log('offset', offset)
 	const data = await item.findAll({
-		offset: paginationData.page - 1 ?? 0,
-		limit: paginationData.size,
+		offset: offset,
+		limit: paginationData.size * 1,
 		...config
 	})
 	let count = 0
@@ -44,5 +46,25 @@ export async function modelFindAll(item: any, config = {}, paginationData = { pa
 			...config
 		})
 	}
-	return { list: data, pagination: { count: count } }
+	return {
+		list: data,
+		pagination: { count: count * 1, page: paginationData.page * 1, size: paginationData.size * 1 }
+	}
+}
+
+export function getParamsRuleData(data = {}, paramsRuleData = {}) {
+	const item = {}
+	objectRepeatObject(data, paramsRuleData, (key, a) => {
+		item[key] = a
+	})
+	return item
+}
+
+export async function simpleParamsRuleModelFindAll({ that, paramsRule = {}, model, findData = {} }) {
+	const { ctx } = that
+	const { query } = ctx.request
+	const paginationData = getDefaultPaginationData(query)
+	const data = getParamsRuleData(query, paramsRule)
+	const returnData = await modelFindAll(model, { where: { ...data, ...findData } }, paginationData)
+	return returnData
 }

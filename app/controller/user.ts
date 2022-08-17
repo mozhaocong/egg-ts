@@ -7,7 +7,7 @@ export const findParamsRule = {
 	updated_at: { type: 'date', required: false }
 }
 
-const searchData = pick(['name', 'age', 'updated_at'], findParamsRule)
+const searchData = pick(['name'], findParamsRule)
 
 export default class HomeController extends BaseController {
 	public async findAll() {
@@ -19,14 +19,14 @@ export default class HomeController extends BaseController {
 		const { ctx, success, searchValidate, setSearchRule } = this
 		searchValidate(ctx, searchData)
 
-		const data = await ctx.service.mySql.findParams(setSearchRule(findParamsRule))
+		const data = await ctx.service.mySql.findParams(setSearchRule(searchData))
 		success(data)
 	}
 
 	public async create() {
 		const { ctx, success } = this
 		ctx.validate(findParamsRule, ctx.request.body)
-		const data = await ctx.service.mySql.create()
+		const data = await ctx.service.mySql.create(findParamsRule)
 		success(data)
 	}
 }

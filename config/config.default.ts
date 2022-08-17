@@ -8,7 +8,7 @@ export default (appInfo: EggAppInfo) => {
 	config.keys = appInfo.name + '_1655368128862_7352'
 
 	// add your egg config in here
-	config.middleware = ['errorHandler']
+	config.middleware = ['errorHandler', 'auth']
 	// config.errorHandler = {
 	//   match: '/api',
 	// };
@@ -57,6 +57,41 @@ export default (appInfo: EggAppInfo) => {
 		mapping: {
 			'.tpl': 'nunjucks'
 		}
+	}
+
+	config.jwt = {
+		secret: 'jwt123456',
+		enable: true, // 默认是关闭，如果开启，这会对所有请求进行自动校验；限定请求，请设置match做路径匹配
+		match: /^\/api/, // 匹配的请求，会走jwt校验，否则忽略；例如登录接口需要被忽略；
+		sign: {
+			//jwt.sign(***,***,[options,***])方法中，options的默认设置可以在这里配置；
+			expiresIn: 10000000 //多少s后过期。actionToken.js中,jwt.sing(plyload,secret,{expiresIn:number})会被合并，调用时设置优先级更高;
+		}
+	}
+
+	config.redis = {
+		// 单个数据库用client
+		client: {
+			port: 6379,
+			host: '127.0.0.1',
+			password: '',
+			db: 0
+		}
+		// 使用多个数据库连接
+		// clients: {
+		// 	db0: {
+		// 		port: 6379,
+		// 		host: '127.0.0.1',
+		// 		password: null,
+		// 		db: 0
+		// 	},
+		// 	db1: {
+		// 		port: 6379,
+		// 		host: '127.0.0.1',
+		// 		password: null,
+		// 		db: 1
+		// 	}
+		// }
 	}
 
 	config.validate = {
