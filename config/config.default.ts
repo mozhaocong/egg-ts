@@ -49,7 +49,20 @@ export default (appInfo: EggAppInfo) => {
 		port: 3306,
 		database: 'mzc_portal',
 		username: 'root',
-		password: '123456a'
+		password: '123456a',
+		define: {
+			freezeTableName: true, //直接查找设置的表名，默认是表名加s或者es
+			// underscored: false, //查询是对字段驼峰类型和下划线类型进行转换
+			timestamps: true, //对于create_at,和update_at，禁止查出createAt和updateAt字段，不设置为false，会同时查出来create_at和createAt
+			createdAt: 'createdAtTest',
+			// 想要 updatedAt 但是希望名称叫做 updateTimestamp
+			updatedAt: 'updatedAtTest',
+			hooks: {
+				beforeCreate(Model) {
+					console.log('beforeCreate', Model)
+				}
+			}
+		}
 	}
 
 	config.view = {

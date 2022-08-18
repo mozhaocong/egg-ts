@@ -9,15 +9,28 @@ module.exports = {
 		 * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
 		 */
 		const { INTEGER, DATE, STRING } = Sequelize
-		await queryInterface.createTable('users', {
-			id: { type: INTEGER, primaryKey: true, autoIncrement: true },
-			name: { type: STRING(30), allowNull: false },
-			age: INTEGER,
-			password: { type: STRING(30), allowNull: false, defaultValue: '123456', comment: '密码' },
-			email: STRING(30),
-			created_at: DATE,
-			updated_at: DATE
+
+		return queryInterface.sequelize.transaction((t) => {
+			return Promise.all([
+				queryInterface.addColumn(
+					'user',
+					'password',
+					{
+						type: STRING(30),
+						allowNull: false,
+						defaultValue: '123456',
+						comment: '密码'
+					},
+					{ transaction: t }
+				)
+			])
 		})
+		//
+		// await queryInterface.addColumn('users', 'password', {
+		// 	type: STRING(30),
+		// 	allowNull: false,
+
+		// })
 	},
 
 	async down(queryInterface, Sequelize) {
@@ -27,6 +40,11 @@ module.exports = {
 		 * Example:
 		 * await queryInterface.dropTable('users');
 		 */
-		await queryInterface.dropTable('users')
+		return queryInterface.sequelize.transaction((t) => {
+			return Promise.all([
+				queryInterface.removeColumn('users', 'password', { transaction: t }),
+				queryInterface.removeColumn('users', 'email', { transaction: t })
+			])
+		})
 	}
 }

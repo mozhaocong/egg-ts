@@ -20,6 +20,7 @@ export default class HomeController extends BaseController {
 		searchValidate(ctx, searchData)
 
 		const data = await ctx.service.mySql.findParams(setSearchRule(searchData))
+
 		success(data)
 	}
 
@@ -27,6 +28,7 @@ export default class HomeController extends BaseController {
 		const { ctx, success } = this
 		ctx.validate(findParamsRule, ctx.request.body)
 		const data = await ctx.service.mySql.create(findParamsRule)
+
 		success(data)
 	}
 }

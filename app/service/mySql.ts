@@ -26,8 +26,11 @@ export default class UserService extends BaseService {
 		const { ctx, getParamsRuleData } = this
 		const { body } = ctx.request
 		const data = getParamsRuleData(body, pramsRules)
-		console.trace('create data', data)
+		console.trace('data', data)
 		const user = await this.app.model.User.create(data)
+		await user.increment({
+			age: 2
+		})
 		return user
 	}
 }
