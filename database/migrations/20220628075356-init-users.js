@@ -16,6 +16,7 @@ module.exports = {
 				name: { type: STRING(30), primaryKey: true, allowNull: false, comment: '用户账号' },
 				email: { type: STRING(30), defaultValue: '123456@', primaryKey: true, comment: '邮箱' },
 				age: INTEGER,
+				groupId: { type: INTEGER, comment: '群组名称' },
 				createdAt: DATE,
 				updatedAt: DATE
 			},
