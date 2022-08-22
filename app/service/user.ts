@@ -2,8 +2,6 @@ import BaseService from '../core/Service'
 
 export default class UserService extends BaseService {
 	async findAll() {
-		// 假如 我们拿到用户 id 从数据库获取用户详细信息
-		// const user = await this.app.mysql.get('router_management', { name: '111' })
 		const user = await this.app.model.User.findAll()
 		return { user }
 	}

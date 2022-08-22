@@ -1,5 +1,4 @@
 export default (app) => {
-	// const { STRING, INTEGER, DATE } = app.Sequelize
 	const { STRING, INTEGER, VIRTUAL } = app.Sequelize
 	const User = app.model.define('user', {
 		id: { type: INTEGER, primaryKey: true, autoIncrement: true, comment: '用户ID' },
@@ -23,6 +22,5 @@ export default (app) => {
 		// updatedAtData: { type: DATE, field: 'createdAtTest' }
 		// password: { type: STRING(30), allowNull: false, defaultValue: '123456', comment: '密码' }
 	})
-
 	return User
 }

@@ -10,6 +10,9 @@ run/
 *.lock
 !.autod.conf.js
 
+typings/
+.vscode/
+
 app/**/*.js
 test/**/*.js
 config/**/*.js

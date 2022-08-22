@@ -1,4 +1,4 @@
-// This file is created by egg-ts-helper@1.33.0
+// This file is created by egg-ts-helper@1.30.3
 // Do not modify this file!!!!!!!!!
 
 import 'egg';
@@ -7,13 +7,15 @@ type AnyFunc<T = any> = (...args: any[]) => T;
 type CanExportFunc = AnyFunc<Promise<any>> | AnyFunc<IterableIterator<any>>;
 type AutoInstanceType<T, U = T extends CanExportFunc ? T : T extends AnyFunc ? ReturnType<T> : T> = U extends AnyClass ? InstanceType<U> : U;
 import ExportAdmin from '../../../app/service/admin';
-import ExportMySql from '../../../app/service/mySql';
+import ExportGroup from '../../../app/service/group';
 import ExportTest from '../../../app/service/Test';
+import ExportUser from '../../../app/service/user';
 
 declare module 'egg' {
   interface IService {
     admin: AutoInstanceType<typeof ExportAdmin>;
-    mySql: AutoInstanceType<typeof ExportMySql>;
+    group: AutoInstanceType<typeof ExportGroup>;
     test: AutoInstanceType<typeof ExportTest>;
+    user: AutoInstanceType<typeof ExportUser>;
   }
 }

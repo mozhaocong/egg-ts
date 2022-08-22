@@ -8,7 +8,7 @@ export function setSearchRule(item) {
 	return data
 }
 function ruleType(item: any) {
-	return { searchReq: false, ...item, required: false, defType: item.type, type: 'searchString' }
+	return { searchRequired: false, ...item, required: false, defType: item.type, type: 'searchString' }
 }
 
 export const defaultPaginationRule = {

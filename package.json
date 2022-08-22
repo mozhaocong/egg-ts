@@ -20,7 +20,8 @@
     "autod": "autod",
     "lint": "eslint . --ext .ts --fix",
     "clean": "ets clean",
-    "sequelize": "npx sequelize db:migrate"
+    "sequelize": "npx sequelize db:migrate",
+    "redis": "npx redis-server.exe"
   },
   "dependencies": {
     "egg": "^2.6.1",
