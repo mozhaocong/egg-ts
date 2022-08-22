@@ -9,23 +9,29 @@ export const findParamsRule = {
 
 const searchData = pick(['name'], findParamsRule)
 
-export default class HomeController extends BaseController {
-	public async findAll() {
-		const { ctx, success } = this
-		const data = await ctx.service.user.findAll()
-		success(data)
-	}
-	public async findParams() {
-		const { ctx, success, searchValidate, setSearchRule } = this
-		searchValidate(ctx, searchData)
-		const data = await ctx.service.user.findParams(setSearchRule(searchData))
-		success(data)
-	}
+// export default class HomeController extends BaseController {
+// 	public async findAll() {
+// 		const { ctx, success } = this
+// 		const data = await ctx.service.user.findAll()
+// 		success(data)
+// 	}
+// 	public async findParams() {
+// 		const { ctx, success, searchValidate, setSearchRule } = this
+// 		searchValidate(ctx, searchData)
+// 		const data = await ctx.service.user.findParams(setSearchRule(searchData))
+// 		success(data)
+// 	}
+//
+// 	public async create() {
+// 		const { ctx, success } = this
+// 		ctx.validate(findParamsRule, ctx.request.body)
+// 		const data = await ctx.service.user.create(findParamsRule)
+// 		success(data)
+// 	}
+// }
 
-	public async create() {
-		const { ctx, success } = this
-		ctx.validate(findParamsRule, ctx.request.body)
-		const data = await ctx.service.user.create(findParamsRule)
-		success(data)
-	}
+export default class HomeController extends BaseController {
+	searchDataRule = searchData
+	findParamsRule = findParamsRule
+	serviceModel = this.ctx.service.user
 }

@@ -1,5 +1,6 @@
 import { Controller } from 'egg'
 import { searchValidate, setSearchRule } from '../utils/model/business'
+import { isTrue } from '../utils'
 
 export function returnFormat({ msg = '', code = 0, data = null }) {
 	return { code: code, data: data, msg: msg }
@@ -8,6 +9,41 @@ export function returnFormat({ msg = '', code = 0, data = null }) {
 export default class BaseController extends Controller {
 	searchValidate = searchValidate
 	setSearchRule = setSearchRule
+	searchDataRule: ObjectMap = {}
+	findParamsRule: ObjectMap = {}
+	serviceModel: any = {}
+	public async findParams() {
+		const { ctx, success, searchValidate, setSearchRule, searchDataRule, serviceModel, notFound } = this
+		searchValidate(ctx, this.searchDataRule)
+		if (!isTrue(serviceModel)) {
+			notFound('serviceModel 不能为空')
+		}
+		const data = await serviceModel?.findParams(setSearchRule(searchDataRule))
+		success(data)
+	}
+
+	public async create() {
+		const { ctx, success, notFound, serviceModel, findParamsRule } = this
+		if (!isTrue(findParamsRule)) {
+			notFound('findParamsRule 不能为空')
+		}
+		if (!isTrue(serviceModel)) {
+			notFound('serviceModel 不能为空')
+		}
+		ctx.validate(findParamsRule, ctx.request.body)
+		const data = await serviceModel?.create(findParamsRule)
+		success(data)
+	}
+
+	public async findAll() {
+		const { success, serviceModel, notFound } = this
+		if (!isTrue(serviceModel)) {
+			notFound('serviceModel 不能为空')
+		}
+		const data = await serviceModel?.findAll()
+		success(data)
+	}
+
 	success = (data) => {
 		//成功返回
 		this.ctx.body = returnFormat({

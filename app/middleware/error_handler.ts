@@ -30,12 +30,22 @@ function errFilter(err, ctx) {
 	switch (name) {
 		case 'JsonWebTokenError':
 			return JsonWebTokenError(message, ctx)
+		case 'newThrow':
+			return newThrowError(message, ctx)
 	}
 	return false
 }
 
 function JsonWebTokenError(message, ctx) {
-	console.log('message', message)
+	ctx.status = 200
+	ctx.body = returnFormat({
+		code: 402,
+		data: null,
+		msg: message
+	})
+	return true
+}
+function newThrowError(message, ctx) {
 	ctx.status = 200
 	ctx.body = returnFormat({
 		code: 402,

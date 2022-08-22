@@ -34,7 +34,6 @@ export function getDefaultPaginationData(query, defData = {}) {
 
 export async function modelFindAll(item: any, config = {}, paginationData = { page: 1, size: 10 }, isCount = true) {
 	const offset = (paginationData.page * 1 - 1 ?? 0) * (paginationData.size * 1)
-	console.log('offset', offset)
 	const data = await item.findAll({
 		offset: offset,
 		limit: paginationData.size * 1,

@@ -15,7 +15,6 @@ export default class HomeController extends BaseController {
 		const { ctx, success, searchValidate, setSearchRule } = this
 		searchValidate(ctx, findParamsRule)
 		const data = await ctx.service.group.findParams(setSearchRule(findParamsRule))
-
 		success(data)
 	}
 
@@ -23,7 +22,6 @@ export default class HomeController extends BaseController {
 		const { ctx, success } = this
 		ctx.validate(findParamsRule, ctx.request.body)
 		const data = await ctx.service.group.create(findParamsRule)
-
 		success(data)
 	}
 }
