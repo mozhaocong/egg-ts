@@ -10,16 +10,13 @@ module.exports = {
 		 */
 		const { INTEGER, DATE, STRING } = Sequelize
 		await queryInterface.createTable(
-			'admin-user',
+			'admin-role',
 			{
-				id: { type: INTEGER, primaryKey: true, autoIncrement: true, comment: '用户ID' },
-				name: { type: STRING(30), allowNull: false, unique: true, comment: '用户账号' },
-				email: { type: STRING(30), allowNull: false, unique: true, comment: '邮箱' },
-				age: INTEGER,
-				roleId: { type: INTEGER, comment: '关联角色Id' },
+				id: { type: INTEGER, primaryKey: true, autoIncrement: true, comment: '角色ID' },
+				groupId: { type: INTEGER, comment: '关联群组ID' },
+				permissionId: { type: INTEGER, comment: '关联权限ID' },
 				createdAt: DATE,
-				updatedAt: DATE,
-				password: { type: STRING(30), allowNull: false, defaultValue: '123456', comment: '密码' }
+				updatedAt: DATE
 			},
 			{ indexes: [{ unique: true, fieIds: ['name'] }] }
 		)
@@ -35,3 +32,8 @@ module.exports = {
 		await queryInterface.dropTable('users')
 	}
 }
+
+//  用户 - 角色  用户包含多个角色  角色包含多个用户
+// 群组 是树型结构， 权限从上到下
+// 群组 - 角色 一个群组包含多个角色 一个角色只能关系一个群组
+// 角色 - 权限  角色 对多 权限  权限 一个 角色

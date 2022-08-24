@@ -13,10 +13,7 @@ module.exports = {
 			'admin-user',
 			{
 				id: { type: INTEGER, primaryKey: true, autoIncrement: true, comment: '用户ID' },
-				name: { type: STRING(30), allowNull: false, unique: true, comment: '用户账号' },
-				email: { type: STRING(30), allowNull: false, unique: true, comment: '邮箱' },
-				age: INTEGER,
-				roleId: { type: INTEGER, comment: '关联角色Id' },
+				groupId: { type: INTEGER, comment: '群组名称' },
 				createdAt: DATE,
 				updatedAt: DATE,
 				password: { type: STRING(30), allowNull: false, defaultValue: '123456', comment: '密码' }

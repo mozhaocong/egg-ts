@@ -9,7 +9,7 @@ module.exports = {
 		 * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
 		 */
 		const { INTEGER, DATE, STRING } = Sequelize
-		await queryInterface.createTable('group', {
+		await queryInterface.createTable('admin-group', {
 			id: { type: INTEGER, primaryKey: true, autoIncrement: true },
 			groupName: STRING(30),
 			createdAt: DATE,
