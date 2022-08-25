@@ -37,12 +37,23 @@ export default class UserService extends BaseService {
 		// const data = getParamsRuleData(query, findSearchParamsRule)
 		// const returnData = await modelFindAll(this.app.model.User, { where: { ...data } }, paginationData)
 		const returnData = this.app.model.User.findAll({
+			attributes: { exclude: ['age'] },
 			include: {
-				model: this.ctx.model.Group,
-				as: 'groupList'
+				model: this.ctx.model.Group
+				// as: 'groupList'
 			}
 			// raw: true
 		})
 		return returnData
+	}
+
+	async create(pramsRules) {
+		const { ctx, getParamsRuleData } = this
+		const { body } = ctx.request
+		const data = getParamsRuleData(body, pramsRules)
+		console.log('data', data)
+		const user = await this.app.model.User.create(body, { include: [{ association: this.app.model.User.Group }] })
+		// const user = await this.app.model.User.create(body, { include: [{ association: this.app.model.User.Group }] })
+		return user
 	}
 }

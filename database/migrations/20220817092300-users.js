@@ -10,21 +10,21 @@ module.exports = {
 		 */
 		const { INTEGER, DATE, STRING } = Sequelize
 
-		return queryInterface.sequelize.transaction((t) => {
-			return Promise.all([
-				queryInterface.addColumn(
-					'user',
-					'password',
-					{
-						type: STRING(30),
-						allowNull: false,
-						defaultValue: '123456',
-						comment: '密码'
-					},
-					{ transaction: t }
-				)
-			])
-		})
+		// return queryInterface.sequelize.transaction((t) => {
+		// 	return Promise.all([
+		// 		queryInterface.addColumn(
+		// 			'user',
+		// 			'password',
+		// 			{
+		// 				type: STRING(30),
+		// 				allowNull: false,
+		// 				defaultValue: '123456',
+		// 				comment: '密码'
+		// 			},
+		// 			{ transaction: t }
+		// 		)
+		// 	])
+		// })
 		//
 		// await queryInterface.addColumn('users', 'password', {
 		// 	type: STRING(30),
