@@ -43,4 +43,14 @@ export default class BaseService extends Service {
 		const user = await appModel.create(data)
 		return user
 	}
+	async destroy(pramsRules) {
+		const { ctx, getParamsRuleData, appModel } = this
+		if (!isTrue(appModel)) {
+			throw { message: 'appModel 不能为空', name: 'newThrow' }
+		}
+		const { body } = ctx.request
+		const data = getParamsRuleData(body, pramsRules)
+		const user = await appModel.destroy({ where: { ...data } })
+		return user
+	}
 }

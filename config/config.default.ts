@@ -57,10 +57,11 @@ export default (appInfo: EggAppInfo) => {
 			createdAt: 'createdAt',
 			// 想要 updatedAt 但是希望名称叫做 updateTimestamp
 			updatedAt: 'updatedAt',
+			deletedAt: 'deletedAt',
 			hooks: {
-				beforeCreate(Model) {
-					console.log('beforeCreate', Model)
-				}
+				// beforeCreate(Model) {
+				// 	console.log('beforeCreate', Model)
+				// }
 			}
 		}
 	}

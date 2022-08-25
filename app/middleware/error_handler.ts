@@ -27,13 +27,29 @@ export default () => {
 
 function errFilter(err, ctx) {
 	const { message, name = '' } = err
+	console.log('errFilterName', name)
+	// console.trace('errFilterMessage', message)
+	console.log('errFilterErr', err.original)
 	switch (name) {
 		case 'JsonWebTokenError':
 			return JsonWebTokenError(message, ctx)
 		case 'newThrow':
 			return newThrowError(message, ctx)
+		case 'SequelizeUniqueConstraintError':
+			return SequelizeUniqueConstraintError(err, ctx)
 	}
 	return false
+}
+
+function SequelizeUniqueConstraintError(err, ctx) {
+	const { sqlMessage = '' } = err.original
+	ctx.status = 200
+	ctx.body = returnFormat({
+		code: 402,
+		data: null,
+		msg: sqlMessage
+	})
+	return true
 }
 
 function JsonWebTokenError(message, ctx) {

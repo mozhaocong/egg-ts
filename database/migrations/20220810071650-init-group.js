@@ -11,6 +11,7 @@ module.exports = {
 		const { INTEGER, DATE, STRING } = Sequelize
 		await queryInterface.createTable('admin-group', {
 			id: { type: INTEGER, primaryKey: true, autoIncrement: true },
+			userId: { type: INTEGER },
 			groupName: STRING(30),
 			createdAt: DATE,
 			updatedAt: DATE

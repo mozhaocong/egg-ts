@@ -34,4 +34,5 @@ export default class HomeController extends BaseController {
 	searchDataRule = searchData
 	findParamsRule = findParamsRule
 	serviceModel = this.ctx.service.user
+	destroyParamsRule = { id: { type: 'number', required: true } }
 }
