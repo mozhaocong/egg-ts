@@ -38,21 +38,29 @@ export default class UserService extends BaseService {
 		// const returnData = await modelFindAll(this.app.model.User, { where: { ...data } }, paginationData)
 		const returnData = this.app.model.User.findAll({
 			// attributes: { exclude: ['age'] }
-			// include: {
-			// 	model: this.ctx.model.Group
-			// 	// as: 'groupList'
-			// }
+			include: {
+				model: this.ctx.model.Role,
+				as: 'roleList'
+			}
 			// raw: true
 		})
 		return returnData
 	}
 
-	async create(pramsRules) {
-		const { ctx, getParamsRuleData } = this
+	// async create(pramsRules) {
+	// 	const { ctx, getParamsRuleData } = this
+	// 	const { body } = ctx.request
+	// 	const data = getParamsRuleData(body, pramsRules)
+	// 	const user = await this.app.model.User.create(data)
+	// 	// const user = await this.app.model.User.create(body, { include: [{ association: this.app.model.User.Group }] })
+	// 	return user
+	// }
+	async create() {
+		const { ctx } = this
 		const { body } = ctx.request
-		const data = getParamsRuleData(body, pramsRules)
-		const user = await this.app.model.User.create(data)
-		// const user = await this.app.model.User.create(body, { include: [{ association: this.app.model.User.Group }] })
+		const user = await this.app.model.User.create(body, {
+			include: [{ association: this.app.model.User.Role, as: 'roleList' }]
+		})
 		return user
 	}
 }

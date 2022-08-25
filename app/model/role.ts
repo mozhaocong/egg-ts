@@ -10,10 +10,16 @@ export default (app) => {
 	})
 	role.associate = function () {
 		// 一个群组对应多个角色
-		app.model.Role.belongsTo(app.model.Group, {
+		app.model.Role.Group = app.model.Role.belongsTo(app.model.Group, {
 			foreignKey: 'groupId',
 			targetKey: 'id',
 			as: 'groupData'
+		})
+		app.model.Role.User = app.model.Role.belongsToMany(app.model.User, {
+			through: app.model.UserToRole,
+			as: 'userList',
+			foreignKey: 'roleId',
+			otherKey: 'userId'
 		})
 	}
 	return role

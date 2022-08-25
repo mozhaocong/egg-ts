@@ -25,10 +25,12 @@ export default (app) => {
 	)
 
 	user.associate = function () {
-		// app.model.Group.hasMany(app.model.User, {
-		// 	foreignKey: 'groupId',
-		// 	targetKey: 'userId'
-		// })
+		app.model.User.Role = app.model.User.belongsToMany(app.model.Role, {
+			through: app.model.UserToRole,
+			as: 'roleList',
+			foreignKey: 'userId',
+			otherKey: 'roleId'
+		})
 		// User.Group = app.model.User.hasMany(app.model.Group, {
 		// 	foreignKey: 'userId',
 		// 	sourceKey: 'groupId'
