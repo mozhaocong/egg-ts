@@ -27,9 +27,9 @@ export default () => {
 
 function errFilter(err, ctx) {
 	const { message, name = '' } = err
-	console.log('errFilterName', name)
+	// console.log('errFilterName', name)
 	// console.trace('errFilterMessage', message)
-	console.log('errFilterErr', err.original)
+	// console.log('errFilterErr', err.original)
 	switch (name) {
 		case 'JsonWebTokenError':
 			return JsonWebTokenError(message, ctx)

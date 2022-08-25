@@ -11,6 +11,7 @@ export default class BaseController extends Controller {
 	setSearchRule = setSearchRule
 	searchDataRule: ObjectMap = {}
 	findParamsRule: ObjectMap = {}
+	updateDataRule: ObjectMap = {}
 	destroyParamsRule: ObjectMap = {}
 	serviceModel: any = {}
 	public async findParams() {
@@ -20,6 +21,19 @@ export default class BaseController extends Controller {
 			notFound('serviceModel 不能为空')
 		}
 		const data = await serviceModel?.findParams(setSearchRule(searchDataRule))
+		success(data)
+	}
+
+	public async update() {
+		const { ctx, success, notFound, serviceModel, updateDataRule } = this
+		if (!isTrue(updateDataRule)) {
+			notFound('findParamsRule 不能为空')
+		}
+		if (!isTrue(serviceModel)) {
+			notFound('serviceModel 不能为空')
+		}
+		ctx.validate(updateDataRule, ctx.request.body)
+		const data = await serviceModel?.update(updateDataRule)
 		success(data)
 	}
 

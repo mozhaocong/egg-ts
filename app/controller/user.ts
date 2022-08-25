@@ -1,37 +1,22 @@
 import BaseController from '../core/Controller'
-import { pick } from 'ramda'
 
 export const findParamsRule = {
-	name: { type: 'string', required: true, searchRequired: true },
-	age: { type: 'number', required: false, searchRequired: false },
-	updated_at: { type: 'date', required: false }
+	name: { type: 'string', required: true },
+	age: { type: 'number', required: false },
+	email: { type: 'string', required: false },
+	password: { type: 'string', required: false }
 }
 
-const searchData = pick(['name'], findParamsRule)
+const searchRule = {
+	id: { type: 'number', required: false },
+	updatedAt: { type: 'date', required: false },
+	createdAt: { type: 'date', required: false }
+}
 
-// export default class HomeController extends BaseController {
-// 	public async findAll() {
-// 		const { ctx, success } = this
-// 		const data = await ctx.service.user.findAll()
-// 		success(data)
-// 	}
-// 	public async findParams() {
-// 		const { ctx, success, searchValidate, setSearchRule } = this
-// 		searchValidate(ctx, searchData)
-// 		const data = await ctx.service.user.findParams(setSearchRule(searchData))
-// 		success(data)
-// 	}
-//
-// 	public async create() {
-// 		const { ctx, success } = this
-// 		ctx.validate(findParamsRule, ctx.request.body)
-// 		const data = await ctx.service.user.create(findParamsRule)
-// 		success(data)
-// 	}
-// }
+const searchDataRule = { ...findParamsRule, ...searchRule }
 
 export default class HomeController extends BaseController {
-	searchDataRule = searchData
+	searchDataRule = searchDataRule
 	findParamsRule = findParamsRule
 	serviceModel = this.ctx.service.user
 	destroyParamsRule = { id: { type: 'number', required: true } }

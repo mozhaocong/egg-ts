@@ -5,8 +5,7 @@ export default () => {
 		const apiUrl = originalUrl.split('?')[0]
 		const whitelist = ['/admin/login', '/user/create']
 		if (!whitelist.includes(apiUrl)) {
-			const user = app.jwt.verify(token, app.config.jwt.secret)
-			console.log(user)
+			app.jwt.verify(token, app.config.jwt.secret)
 		}
 		await next()
 	}

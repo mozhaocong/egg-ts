@@ -9,17 +9,14 @@ module.exports = {
 		 * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
 		 */
 		const { INTEGER, DATE, STRING } = Sequelize
-		await queryInterface.createTable(
-			'admin-role',
-			{
-				id: { type: INTEGER, primaryKey: true, autoIncrement: true, comment: '角色ID' },
-				groupId: { type: INTEGER, comment: '关联群组ID' },
-				permissionId: { type: INTEGER, comment: '关联权限ID' },
-				createdAt: DATE,
-				updatedAt: DATE
-			},
-			{ indexes: [{ unique: true, fieIds: ['name'] }] }
-		)
+		await queryInterface.createTable('admin-role', {
+			id: { type: INTEGER, primaryKey: true, autoIncrement: true, comment: '角色ID' },
+			roleName: { type: STRING(30), unique: true, allowNull: false, comment: '角色名称' },
+			groupId: { type: INTEGER, comment: '关联群组ID' },
+			permissionId: { type: INTEGER, comment: '关联权限ID' },
+			createdAt: DATE,
+			updatedAt: DATE
+		})
 	},
 
 	async down(queryInterface, Sequelize) {

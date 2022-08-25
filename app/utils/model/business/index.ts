@@ -11,10 +11,16 @@ function ruleType(item: any) {
 	return { searchRequired: false, ...item, required: false, defType: item.type, type: 'searchString' }
 }
 
+export type paginationDataType = {
+	page: number
+	size: number
+}
+
 export const defaultPaginationRule = {
 	page: { type: 'number', required: false },
 	size: { type: 'number', required: false }
 }
+
 const defaultPaginationData = { page: 1, size: 10 }
 
 export function searchValidate(ctx: any, data) {
@@ -24,19 +30,20 @@ export function searchValidate(ctx: any, data) {
 	ctx.validate(searchDataRule, ctx.request.query)
 }
 
-export function getDefaultPaginationData(query, defData = {}) {
+export function getDefaultPaginationData(query, defData = {}): { page: number; size: number } {
 	const data = { ...defaultPaginationData, ...defData }
 	objectRepeatObject(query, defaultPaginationRule, (key, a) => {
-		data[key] = a
+		data[key] = a * 1
 	})
 	return data
 }
 
-export async function modelFindAll(item: any, config = {}, paginationData = { page: 1, size: 10 }, isCount = true) {
-	const offset = (paginationData.page * 1 - 1 ?? 0) * (paginationData.size * 1)
+export async function modelFindAll(item: any, config = {}, paginationData = defaultPaginationData, isCount = true) {
+	const offset = (paginationData.page - 1 ?? 0) * paginationData.size
+	console.log('config', config)
 	const data = await item.findAll({
 		offset: offset,
-		limit: paginationData.size * 1,
+		limit: paginationData.size,
 		...config
 	})
 	let count = 0
@@ -47,11 +54,21 @@ export async function modelFindAll(item: any, config = {}, paginationData = { pa
 	}
 	return {
 		list: data,
-		pagination: { count: count * 1, page: paginationData.page * 1, size: paginationData.size * 1 }
+		pagination: { count: count, page: paginationData.page, size: paginationData.size }
 	}
 }
 
-export function getParamsRuleData(data = {}, paramsRuleData = {}) {
+// 获取分页查询参数
+export function getFindAllCountData(config = {}, paginationData = defaultPaginationData): ObjectMap {
+	const offset = (paginationData.page - 1 ?? 0) * paginationData.size
+	return {
+		offset: offset,
+		limit: paginationData.size,
+		...config
+	}
+}
+
+export function getParamsRuleData(data = {}, paramsRuleData = {}): ObjectMap {
 	const item = {}
 	objectRepeatObject(data, paramsRuleData, (key, a) => {
 		item[key] = a
@@ -59,11 +76,10 @@ export function getParamsRuleData(data = {}, paramsRuleData = {}) {
 	return item
 }
 
-export async function simpleParamsRuleModelFindAll({ that, paramsRule = {}, model, findData = {} }) {
+export async function simpleParamsRuleModelFindAll({ that, paramsRule = {}, model, findAllConfig = {} }) {
 	const { ctx } = that
 	const { query } = ctx.request
 	const paginationData = getDefaultPaginationData(query)
 	const data = getParamsRuleData(query, paramsRule)
-	const returnData = await modelFindAll(model, { where: { ...data, ...findData } }, paginationData)
-	return returnData
+	return await modelFindAll(model, { where: { ...data }, ...findAllConfig }, paginationData)
 }

@@ -11,8 +11,8 @@ module.exports = {
 		const { INTEGER, DATE, STRING } = Sequelize
 		await queryInterface.createTable('admin-group', {
 			id: { type: INTEGER, primaryKey: true, autoIncrement: true },
-			userId: { type: INTEGER },
-			groupName: STRING(30),
+			pId: { type: INTEGER, defaultValue: 0, comment: '上级Id,最高级为0' },
+			groupName: { type: STRING(30), unique: true, allowNull: false, comment: '群组名称' },
 			createdAt: DATE,
 			updatedAt: DATE
 		})
