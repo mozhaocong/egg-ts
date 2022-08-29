@@ -6,6 +6,7 @@ export default (app: Application) => {
 	router.get('/user/findAll', controller.user.findAll)
 	router.get('/user/findParams', controller.user.findParams)
 	router.post('/user/create', controller.user.create)
+	router.post('/user/update', controller.user.update)
 	router.post('/user/destroy', controller.user.destroy)
 	router.get('/group/findAll', controller.group.findAll)
 	router.get('/group/findParams', controller.group.findParams)
