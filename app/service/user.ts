@@ -149,9 +149,30 @@ export default class UserService extends BaseService {
 	async create() {
 		const { ctx } = this
 		const { body } = ctx.request
-		const user = await this.app.model.User.create(body, {
+		console.log('body', body)
+		const createData = body
+		const user = await this.app.model.User.create(createData, {
 			include: [{ association: this.app.model.User.Role, as: 'roleList' }]
 		})
 		return user
 	}
+	// async create() {
+	// 	const { ctx, modelAssociationCreate } = this
+	// 	const { body } = ctx.request
+	// 	const config = {
+	// 		main: { model: this.app.model.User, key: 'id', data: body },
+	// 		association: [
+	// 			{
+	// 				model: this.app.model.Role,
+	// 				key: 'id',
+	// 				associationModel: this.app.model.UserToRole,
+	// 				foreignKey: 'userId',
+	// 				otherKey: 'roleId',
+	// 				as: 'roleList'
+	// 			}
+	// 		],
+	// 		that: this
+	// 	}
+	// 	return await modelAssociationCreate(config)
+	// }
 }

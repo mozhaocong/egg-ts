@@ -1,5 +1,6 @@
 import { Service } from 'egg'
 import {
+	modelAssociationCreate,
 	modelAssociationUpdate,
 	getDefaultPaginationData,
 	getFindAllCountData,
@@ -26,6 +27,7 @@ export default class BaseService extends Service {
 	getFindAllCountData = getFindAllCountData
 	customFindParamsMethod: customFindParamsMethod | null = null
 	setFindAllConfig = {}
+	modelAssociationCreate = modelAssociationCreate
 	modelAssociationUpdate = modelAssociationUpdate
 	appModel: ObjectMap = {}
 

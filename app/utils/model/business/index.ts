@@ -1,4 +1,4 @@
-import { objectRepeatObject } from '../public/data'
+import { deepClone, objectRepeatObject } from '../public/data'
 import { isTrue } from '../public/typeJudgment'
 
 export function setSearchRule(item) {
@@ -226,6 +226,52 @@ export async function modelAssociationUpdate(config: modelAssociationUpdate) {
 		return modelData
 	} catch (e) {
 		console.log('e', e)
+		await transaction.rollback()
+		return false
+	}
+}
+
+export async function modelAssociationCreate(config: modelAssociationUpdate) {
+	const {
+		that: { ctx },
+		main: { data: paramsData, model: mainModel, key: mainKey },
+		association
+	} = config
+	const transaction = await ctx.model.transaction()
+	try {
+		const forDataList: any[] = []
+		for (const res of association) {
+			const { key: attachedKey, as, foreignKey, otherKey, model } = res
+			const addList: any[] = []
+			const bulkCreateList = paramsData[as]
+				.filter((item) => {
+					if (!isTrue(item[attachedKey])) {
+						addList.push(item)
+						return false
+					}
+					return true
+				})
+				.map((item) => {
+					return { [foreignKey]: paramsData[mainKey], [otherKey]: item[attachedKey] }
+				})
+			forDataList.push({ bulkCreateList, addList, association: model, as: as })
+		}
+
+		const createData = deepClone(paramsData)
+		const include = forDataList.map((res) => {
+			const { as, addList, association } = res
+			createData[as] = addList
+			return { association, as }
+		})
+
+		console.log('forDataList', forDataList)
+		console.log('createData', createData, include)
+		const mainCreateData = await mainModel.create(createData, { include: include })
+		console.log('mainCreateData', mainCreateData)
+		await transaction.commit()
+		return true
+	} catch (e) {
+		console.trace('modelAssociationCreate', e)
 		await transaction.rollback()
 		return false
 	}
