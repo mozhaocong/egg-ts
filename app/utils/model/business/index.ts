@@ -86,113 +86,245 @@ export async function simpleParamsRuleModelFindAll({ that, paramsRule = {}, mode
 }
 
 type association = {
+	// 要关联表的Model
 	model: any
+	// 要关联表的key值
 	key: string
+	// 关联表的Model
 	associationModel: any
+	// 关联表里的主表key
 	foreignKey: string
+	// 关联表里的要关联表的key
 	otherKey: string
+	// 关联表里的主表的别名
 	as: string
 }
 
 export type modelAssociationUpdate = {
+	// 操作主表的配置
 	main: { model: any; key: string; data: ObjectMap }
+	// 关联操作的关联表和要关联的数组配置
 	association: association[]
+	// 获取app和ctx
 	that: any
 }
 
+export type moduleAssociationOperate = {
+	// 获取app和ctx
+	that: any
+	// 事务方法
+	transaction: any
+	// 要关联表的添加数组
+	addList: any[]
+	// 主表配置
+	mainConfig: { key: string; data: ObjectMap }
+	// 关联数组,通过主表 data的别名获取 data[as]
+	bulkCreateList: any[]
+}
+
+// 关联表的操作
+export async function moduleAssociationOperate(config: moduleAssociationOperate, associationConfig: association) {
+	const { model, foreignKey, otherKey, key: attachedKey, associationModel } = associationConfig
+	const {
+		transaction,
+		addList,
+		that: { app },
+		mainConfig: { data: paramsData, key: mainKey }
+	} = config
+	const deduplicationList: any[] = []
+	let bulkCreateList = config.bulkCreateList.filter((item) => {
+		if (deduplicationList.includes(item[otherKey])) {
+			return false
+		}
+		deduplicationList.push(item[otherKey])
+		return true
+	})
+	const { Op } = app.Sequelize
+	const attachedModel = model
+	if (isTrue(addList)) {
+		const addListData = await attachedModel.bulkCreate(addList, { transaction })
+		const addBulkCreateList = addListData.map((item) => {
+			return { [foreignKey]: paramsData[mainKey], [otherKey]: item[attachedKey] }
+		})
+		bulkCreateList = [...bulkCreateList, ...addBulkCreateList]
+		console.log('add', bulkCreateList)
+	}
+	console.log('deduplicationList', bulkCreateList)
+
+	const bulkCreateListMark = bulkCreateList.map((item) => {
+		return item[otherKey]
+	})
+
+	// 获取从表需要更新的关联表的数据
+	const roleList = await attachedModel.findAll({
+		where: {
+			[attachedKey]: bulkCreateListMark
+		},
+		transaction
+	})
+	// 判断更新的关联表和从表的数据一致不
+	if (roleList.length !== bulkCreateListMark.length) {
+		console.log('bulkCreateListMark', bulkCreateListMark, roleList)
+		console.trace('判断更新的关联表和从表的数据一致不')
+		throw '判断更新的关联表和从表的数据一致不'
+	}
+
+	// 删除除了要更新的与主表关联ID的其他数据
+	await associationModel.destroy({
+		where: { [foreignKey]: paramsData[mainKey], [Op.not]: [{ [otherKey]: bulkCreateListMark }] },
+		transaction
+	})
+	// 查询与主表关联Id的数据
+	const associationData = await associationModel.findAll({
+		where: { [foreignKey]: paramsData[mainKey] },
+		transaction
+	})
+	// 生成关联表的从表的ID
+	const associationListMark = associationData.map((item) => {
+		return item[otherKey]
+	})
+	// 过滤出要新增关联表的从表数据
+	const filterList = bulkCreateList.filter((item) => {
+		return !associationListMark.includes(item[otherKey])
+	})
+	// 批量创建关联表的新关联关系
+	await associationModel.bulkCreate(filterList, { transaction })
+}
+
 export async function modelAssociationUpdate(config: modelAssociationUpdate) {
-	// const config = {
-	// 	main: { model: null, key: 'id', data: {} },
-	// 	association: [
-	// 		{ model: null, key: 'id', associationModel: null, foreignKey: 'userId', otherKey: 'roleId', as: 'roleList' }
-	// 	]
-	// }
-	const { data = {} } = config.main
-	const { app, ctx } = config.that
-	const paramsData = data
-	const mainModel: any = config.main.model
+	const {
+		that: { ctx },
+		main: { data: paramsData, model: mainModel, key: mainKey },
+		association
+	} = config
 	const transaction = await ctx.model.transaction()
 	try {
-		const { association } = config
-		const mainKey = config.main.key
 		for (const res of association) {
-			// 另外一个主表
-			const attachedKey = res.key
-			const attachedModel: any = res.model
-			const associationModel: any = res.associationModel
-			const { as, foreignKey, otherKey } = res
+			const { key: attachedKey, as, foreignKey, otherKey } = res
 			const addList: any[] = []
-			const deduplicationList: any[] = []
-			let bulkCreateList = paramsData[as]
+			const bulkCreateList = paramsData[as]
 				.filter((item) => {
 					if (!isTrue(item[attachedKey])) {
 						addList.push(item)
 						return false
 					}
-					if (deduplicationList.includes(item[attachedKey])) {
-						return false
-					}
-					deduplicationList.push(item[attachedKey])
 					return true
 				})
 				.map((item) => {
 					return { [foreignKey]: paramsData[mainKey], [otherKey]: item[attachedKey] }
 				})
-			const { Op } = app.Sequelize
-			if (isTrue(addList)) {
-				const addListData = await attachedModel.bulkCreate(addList, { transaction })
-				const addBulkCreateList = addListData.map((item) => {
-					return { [foreignKey]: paramsData[mainKey], [otherKey]: item[attachedKey] }
-				})
-				bulkCreateList = [...bulkCreateList, ...addBulkCreateList]
-			}
-			console.log('bulkCreateList', bulkCreateList, attachedKey)
-			const bulkCreateListMark = bulkCreateList.map((item) => {
-				return item[otherKey]
-			})
-
-			// 获取从表需要更新的关联表的数据
-			const roleList = await attachedModel.findAll({
-				where: {
-					[attachedKey]: bulkCreateListMark
-				}
-			})
-			// 判断更新的关联表和从表的数据一致不
-			if (roleList.length !== bulkCreateListMark.length) {
-				console.trace('判断更新的关联表和从表的数据一致不')
-				return false
-			}
-
-			// 删除除了要更新的与主表关联ID的其他数据
-			await associationModel.destroy({
-				where: { [foreignKey]: paramsData[mainKey], [Op.not]: [{ [otherKey]: bulkCreateListMark }] },
-				transaction
-			})
-			// 查询与主表关联Id的数据
-			const associationData = await associationModel.findAll({
-				where: { [foreignKey]: paramsData[mainKey] },
-				transaction
-			})
-			// 生成关联表的从表的ID
-			const associationListMark = associationData.map((item) => {
-				return item[otherKey]
-			})
-			// 过滤出要新增关联表的从表数据
-			const filterList = bulkCreateList.filter((item) => {
-				return !associationListMark.includes(item[otherKey])
-			})
-			// 批量创建关联表的新关联关系
-			await associationModel.bulkCreate(filterList, { transaction })
+			await moduleAssociationOperate(
+				{ that: config.that, mainConfig: config.main, transaction, addList, bulkCreateList },
+				res
+			)
 		}
-		const user = await mainModel.update(paramsData, {
+		const modelData = await mainModel.update(paramsData, {
 			where: { [mainKey]: paramsData[mainKey] },
 			transaction
 		})
 		await transaction.commit()
-		return user
+		return modelData
 	} catch (e) {
 		console.log('e', e)
 		await transaction.rollback()
 		return false
 	}
 }
+
+// // 没有抽离的完整关联更新
+// export async function modelAssociationUpdate(config: modelAssociationUpdate) {
+// 	// const config = {
+// 	// 	main: { model: null, key: 'id', data: {} },
+// 	// 	association: [
+// 	// 		{ model: null, key: 'id', associationModel: null, foreignKey: 'userId', otherKey: 'roleId', as: 'roleList' }
+// 	// 	]
+// 	// }
+// 	const { data = {} } = config.main
+// 	const { app, ctx } = config.that
+// 	const paramsData = data
+// 	const mainModel: any = config.main.model
+// 	const transaction = await ctx.model.transaction()
+// 	try {
+// 		const { association } = config
+// 		const mainKey = config.main.key
+// 		for (const res of association) {
+// 			// 另外一个主表
+// 			const attachedKey = res.key
+// 			const attachedModel: any = res.model
+// 			const associationModel: any = res.associationModel
+// 			const { as, foreignKey, otherKey } = res
+// 			const addList: any[] = []
+// 			const deduplicationList: any[] = []
+// 			let bulkCreateList = paramsData[as]
+// 				.filter((item) => {
+// 					if (!isTrue(item[attachedKey])) {
+// 						addList.push(item)
+// 						return false
+// 					}
+// 					if (deduplicationList.includes(item[attachedKey])) {
+// 						return false
+// 					}
+// 					deduplicationList.push(item[attachedKey])
+// 					return true
+// 				})
+// 				.map((item) => {
+// 					return { [foreignKey]: paramsData[mainKey], [otherKey]: item[attachedKey] }
+// 				})
+// 			const { Op } = app.Sequelize
+// 			if (isTrue(addList)) {
+// 				const addListData = await attachedModel.bulkCreate(addList, { transaction })
+// 				const addBulkCreateList = addListData.map((item) => {
+// 					return { [foreignKey]: paramsData[mainKey], [otherKey]: item[attachedKey] }
+// 				})
+// 				bulkCreateList = [...bulkCreateList, ...addBulkCreateList]
+// 			}
+// 			const bulkCreateListMark = bulkCreateList.map((item) => {
+// 				return item[otherKey]
+// 			})
+//
+// 			// 获取从表需要更新的关联表的数据
+// 			const roleList = await attachedModel.findAll({
+// 				where: {
+// 					[attachedKey]: bulkCreateListMark
+// 				},
+// 				transaction
+// 			})
+// 			// 判断更新的关联表和从表的数据一致不
+// 			if (roleList.length !== bulkCreateListMark.length) {
+// 				console.trace('判断更新的关联表和从表的数据一致不')
+// 				throw '判断更新的关联表和从表的数据一致不'
+// 			}
+//
+// 			// 删除除了要更新的与主表关联ID的其他数据
+// 			await associationModel.destroy({
+// 				where: { [foreignKey]: paramsData[mainKey], [Op.not]: [{ [otherKey]: bulkCreateListMark }] },
+// 				transaction
+// 			})
+// 			// 查询与主表关联Id的数据
+// 			const associationData = await associationModel.findAll({
+// 				where: { [foreignKey]: paramsData[mainKey] },
+// 				transaction
+// 			})
+// 			// 生成关联表的从表的ID
+// 			const associationListMark = associationData.map((item) => {
+// 				return item[otherKey]
+// 			})
+// 			// 过滤出要新增关联表的从表数据
+// 			const filterList = bulkCreateList.filter((item) => {
+// 				return !associationListMark.includes(item[otherKey])
+// 			})
+// 			// 批量创建关联表的新关联关系
+// 			await associationModel.bulkCreate(filterList, { transaction })
+// 		}
+// 		const user = await mainModel.update(paramsData, {
+// 			where: { [mainKey]: paramsData[mainKey] },
+// 			transaction
+// 		})
+// 		await transaction.commit()
+// 		return user
+// 	} catch (e) {
+// 		console.log('e', e)
+// 		await transaction.rollback()
+// 		return false
+// 	}
+// }
