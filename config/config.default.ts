@@ -28,7 +28,7 @@ export default (appInfo: EggAppInfo) => {
 			// 用户名
 			user: 'root',
 			// 密码
-			password: '123456a',
+			password: '123456789a',
 			// 数据库名
 			database: 'mzc_portal'
 		},
@@ -49,7 +49,7 @@ export default (appInfo: EggAppInfo) => {
 		port: 3306,
 		database: 'mzc_portal',
 		username: 'root',
-		password: '123456a',
+		password: '123456789a',
 		define: {
 			freezeTableName: true, //直接查找设置的表名，默认是表名加s或者es
 			// underscored: false, //查询是对字段驼峰类型和下划线类型进行转换

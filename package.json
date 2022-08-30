@@ -21,7 +21,7 @@
     "lint": "eslint . --ext .ts --fix",
     "clean": "ets clean",
     "sequelize": "npx sequelize db:migrate",
-    "redis": "npx redis-server.exe"
+    "redis": "npx redis-server"
   },
   "dependencies": {
     "egg": "^2.6.1",

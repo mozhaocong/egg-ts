@@ -231,7 +231,15 @@ export async function modelAssociationUpdate(config: modelAssociationUpdate) {
 	}
 }
 
-export async function modelAssociationCreate(config: modelAssociationUpdate) {
+export interface associationCreate extends association {
+	includeAssociation: any
+}
+
+export interface modelAssociationCreate extends modelAssociationUpdate {
+	association: associationCreate[]
+}
+
+export async function modelAssociationCreate(config: modelAssociationCreate) {
 	const {
 		that: { ctx },
 		main: { data: paramsData, model: mainModel, key: mainKey },
@@ -241,7 +249,7 @@ export async function modelAssociationCreate(config: modelAssociationUpdate) {
 	try {
 		const forDataList: any[] = []
 		for (const res of association) {
-			const { key: attachedKey, as, foreignKey, otherKey, model } = res
+			const { key: attachedKey, as, foreignKey, otherKey } = res
 			const addList: any[] = []
 			const bulkCreateList = paramsData[as]
 				.filter((item) => {
@@ -254,19 +262,21 @@ export async function modelAssociationCreate(config: modelAssociationUpdate) {
 				.map((item) => {
 					return { [foreignKey]: paramsData[mainKey], [otherKey]: item[attachedKey] }
 				})
-			forDataList.push({ bulkCreateList, addList, association: model, as: as })
+			forDataList.push({ bulkCreateList, addList, ...res })
 		}
 
 		const createData = deepClone(paramsData)
+		console.log('123456', 12)
 		const include = forDataList.map((res) => {
-			const { as, addList, association } = res
+			const { as, addList, includeAssociation } = res
 			createData[as] = addList
-			return { association, as }
+			return { association: includeAssociation, as }
 		})
 
-		console.log('forDataList', forDataList)
+		// console.log('forDataList', forDataList)
 		console.log('createData', createData, include)
-		const mainCreateData = await mainModel.create(createData, { include: include })
+		const mainCreateData = await mainModel.create(createData, { include, transaction })
+
 		console.log('mainCreateData', mainCreateData)
 		await transaction.commit()
 		return true

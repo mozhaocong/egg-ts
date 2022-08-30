@@ -146,7 +146,7 @@ export default class UserService extends BaseService {
 		return await modelAssociationUpdate(config)
 	}
 
-	async create() {
+	async create1() {
 		const { ctx } = this
 		const { body } = ctx.request
 		console.log('body', body)
@@ -156,23 +156,25 @@ export default class UserService extends BaseService {
 		})
 		return user
 	}
-	// async create() {
-	// 	const { ctx, modelAssociationCreate } = this
-	// 	const { body } = ctx.request
-	// 	const config = {
-	// 		main: { model: this.app.model.User, key: 'id', data: body },
-	// 		association: [
-	// 			{
-	// 				model: this.app.model.Role,
-	// 				key: 'id',
-	// 				associationModel: this.app.model.UserToRole,
-	// 				foreignKey: 'userId',
-	// 				otherKey: 'roleId',
-	// 				as: 'roleList'
-	// 			}
-	// 		],
-	// 		that: this
-	// 	}
-	// 	return await modelAssociationCreate(config)
-	// }
+	async create() {
+		const { ctx, modelAssociationCreate } = this
+		const { body } = ctx.request
+		console.log('includeAssociation', this.app.model.User.Role)
+		const config = {
+			main: { model: this.app.model.User, key: 'id', data: body },
+			association: [
+				{
+					includeAssociation: this.app.model.User.Role,
+					model: this.app.model.Role,
+					key: 'id',
+					associationModel: this.app.model.UserToRole,
+					foreignKey: 'userId',
+					otherKey: 'roleId',
+					as: 'roleList'
+				}
+			],
+			that: this
+		}
+		return await modelAssociationCreate(config)
+	}
 }
