@@ -98,6 +98,8 @@ type association = {
 	otherKey: string
 	// 关联表里的主表的别名
 	as: string
+	// 是否调用关联表删除操作
+	isAssociationModelDestroy?: boolean
 }
 
 export type modelAssociationUpdate = {
@@ -124,13 +126,24 @@ export type moduleAssociationOperate = {
 
 // 关联表的操作
 export async function moduleAssociationOperate(config: moduleAssociationOperate, associationConfig: association) {
-	const { model, foreignKey, otherKey, key: attachedKey, associationModel } = associationConfig
+	const {
+		model,
+		foreignKey,
+		otherKey,
+		key: attachedKey,
+		associationModel,
+		isAssociationModelDestroy = true
+	} = associationConfig
 	const {
 		transaction,
 		addList,
 		that: { app },
 		mainConfig: { data: paramsData, key: mainKey }
 	} = config
+	if (!isTrue(config.bulkCreateList)) {
+		return true
+	}
+	// 去重校验数组
 	const deduplicationList: any[] = []
 	let bulkCreateList = config.bulkCreateList.filter((item) => {
 		if (deduplicationList.includes(item[otherKey])) {
@@ -149,13 +162,13 @@ export async function moduleAssociationOperate(config: moduleAssociationOperate,
 		bulkCreateList = [...bulkCreateList, ...addBulkCreateList]
 		console.log('add', bulkCreateList)
 	}
-	console.log('deduplicationList', bulkCreateList)
 
 	const bulkCreateListMark = bulkCreateList.map((item) => {
 		return item[otherKey]
 	})
 
 	// 获取从表需要更新的关联表的数据
+	console.log('attachedModel findAll')
 	const roleList = await attachedModel.findAll({
 		where: {
 			[attachedKey]: bulkCreateListMark
@@ -169,12 +182,17 @@ export async function moduleAssociationOperate(config: moduleAssociationOperate,
 		throw '判断更新的关联表和从表的数据一致不'
 	}
 
-	// 删除除了要更新的与主表关联ID的其他数据
-	await associationModel.destroy({
-		where: { [foreignKey]: paramsData[mainKey], [Op.not]: [{ [otherKey]: bulkCreateListMark }] },
-		transaction
-	})
+	if (isAssociationModelDestroy) {
+		// 删除除了要更新的与主表关联ID的其他数据
+		console.log('associationModel destroy')
+		await associationModel.destroy({
+			where: { [foreignKey]: paramsData[mainKey], [Op.not]: [{ [otherKey]: bulkCreateListMark }] },
+			transaction
+		})
+	}
+
 	// 查询与主表关联Id的数据
+	console.log('associationModel findAll')
 	const associationData = await associationModel.findAll({
 		where: { [foreignKey]: paramsData[mainKey] },
 		transaction
@@ -188,6 +206,7 @@ export async function moduleAssociationOperate(config: moduleAssociationOperate,
 		return !associationListMark.includes(item[otherKey])
 	})
 	// 批量创建关联表的新关联关系
+	console.log('associationModel bulkCreate')
 	await associationModel.bulkCreate(filterList, { transaction })
 }
 
@@ -266,18 +285,29 @@ export async function modelAssociationCreate(config: modelAssociationCreate) {
 		}
 
 		const createData = deepClone(paramsData)
-		console.log('123456', 12)
 		const include = forDataList.map((res) => {
 			const { as, addList, includeAssociation } = res
 			createData[as] = addList
 			return { association: includeAssociation, as }
 		})
+		const mainCreateData: any = await mainModel.create(createData, { include, transaction })
+		for (const res of forDataList) {
+			const { foreignKey } = res
+			const bulkCreateList = res.bulkCreateList.map((bulkData) => {
+				return { ...bulkData, [foreignKey]: mainCreateData[mainKey] }
+			})
+			await moduleAssociationOperate(
+				{
+					that: config.that,
+					mainConfig: { ...config.main, data: mainCreateData },
+					transaction,
+					addList: [],
+					bulkCreateList
+				},
+				{ ...res, isAssociationModelDestroy: false }
+			)
+		}
 
-		// console.log('forDataList', forDataList)
-		console.log('createData', createData, include)
-		const mainCreateData = await mainModel.create(createData, { include, transaction })
-
-		console.log('mainCreateData', mainCreateData)
 		await transaction.commit()
 		return true
 	} catch (e) {
