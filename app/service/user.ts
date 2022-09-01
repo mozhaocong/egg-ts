@@ -146,6 +146,26 @@ export default class UserService extends BaseService {
 		return await modelAssociationUpdate(config)
 	}
 
+	async destroy() {
+		const { ctx, modelAssociationDestroy } = this
+		const { body } = ctx.request
+		const config = {
+			main: { model: this.app.model.User, key: 'id', data: body },
+			association: [
+				{
+					model: this.app.model.Role,
+					key: 'id',
+					associationModel: this.app.model.UserToRole,
+					foreignKey: 'userId',
+					otherKey: 'roleId',
+					as: 'roleList'
+				}
+			],
+			that: this
+		}
+		return await modelAssociationDestroy(config)
+	}
+
 	async create1() {
 		const { ctx } = this
 		const { body } = ctx.request

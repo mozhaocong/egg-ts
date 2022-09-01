@@ -7,7 +7,8 @@ import {
 	getParamsRuleData,
 	modelFindAll,
 	paginationDataType,
-	simpleParamsRuleModelFindAll
+	simpleParamsRuleModelFindAll,
+	modelAssociationDestroy
 } from '../utils/model/business'
 import { isTrue } from '../utils'
 
@@ -29,6 +30,7 @@ export default class BaseService extends Service {
 	setFindAllConfig = {}
 	modelAssociationCreate = modelAssociationCreate
 	modelAssociationUpdate = modelAssociationUpdate
+	modelAssociationDestroy = modelAssociationDestroy
 	appModel: ObjectMap = {}
 
 	async findAll() {

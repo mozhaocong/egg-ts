@@ -22,7 +22,7 @@ export default (appInfo: EggAppInfo) => {
 		// 单数据库信息配置
 		client: {
 			// host
-			host: 'localhost',
+			host: '127.0.0.1',
 			// 端口号
 			port: '3306',
 			// 用户名

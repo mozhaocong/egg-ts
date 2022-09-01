@@ -317,6 +317,34 @@ export async function modelAssociationCreate(config: modelAssociationCreate) {
 	}
 }
 
+export async function modelAssociationDestroy(config: modelAssociationUpdate) {
+	const {
+		that: { ctx },
+		main: { model: mainModel, key: mainKey, data: paramsData },
+		association
+	} = config
+	const transaction = await ctx.model.transaction()
+	try {
+		for (const res of association) {
+			const { associationModel, foreignKey } = res
+			await associationModel.destroy({
+				where: { [foreignKey]: paramsData[mainKey] },
+				transaction
+			})
+		}
+		await mainModel.destroy({
+			where: { [mainKey]: paramsData[mainKey] },
+			transaction
+		})
+		await transaction.commit()
+		return true
+	} catch (e) {
+		console.trace('modelAssociationDestroy', e)
+		await transaction.rollback()
+		return false
+	}
+}
+
 // // 没有抽离的完整关联更新
 // export async function modelAssociationUpdate(config: modelAssociationUpdate) {
 // 	// const config = {
