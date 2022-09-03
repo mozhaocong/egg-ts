@@ -8,7 +8,8 @@ export default (appInfo: EggAppInfo) => {
 	config.keys = appInfo.name + '_1655368128862_7352'
 
 	// add your egg config in here
-	config.middleware = ['errorHandler', 'auth']
+	// config.middleware = ['errorHandler', 'auth']
+	config.middleware = ['errorHandler']
 	// config.errorHandler = {
 	//   match: '/api',
 	// };

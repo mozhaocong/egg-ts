@@ -85,47 +85,11 @@ export async function simpleParamsRuleModelFindAll({ that, paramsRule = {}, mode
 	return await modelFindAll(model, { where: { ...data }, ...findAllConfig }, paginationData)
 }
 
-type association = {
-	// 要关联表的Model
-	model: any
-	// 要关联表的key值
-	key: string
-	// 关联表的Model
-	associationModel: any
-	// 关联表里的主表key
-	foreignKey: string
-	// 关联表里的要关联表的key
-	otherKey: string
-	// 关联表里的主表的别名
-	as: string
-	// 是否调用关联表删除操作
-	isAssociationModelDestroy?: boolean
-}
-
-export type modelAssociationUpdate = {
-	// 操作主表的配置
-	main: { model: any; key: string; data: ObjectMap }
-	// 关联操作的关联表和要关联的数组配置
-	association: association[]
-	// 获取app和ctx
-	that: any
-}
-
-export type moduleAssociationOperate = {
-	// 获取app和ctx
-	that: any
-	// 事务方法
-	transaction: any
-	// 要关联表的添加数组
-	addList: any[]
-	// 主表配置
-	mainConfig: { key: string; data: ObjectMap }
-	// 关联数组,通过主表 data的别名获取 data[as]
-	bulkCreateList: any[]
-}
-
 // 关联表的操作
-export async function moduleAssociationOperate(config: moduleAssociationOperate, associationConfig: association) {
+export async function moduleAssociationOperate(
+	config: moduleAssociationOperateConfig,
+	associationConfig: moduleAssociationOperateAssociationConfig
+) {
 	const {
 		model,
 		foreignKey,
@@ -248,14 +212,6 @@ export async function modelAssociationUpdate(config: modelAssociationUpdate) {
 		await transaction.rollback()
 		return false
 	}
-}
-
-export interface associationCreate extends association {
-	includeAssociation: any
-}
-
-export interface modelAssociationCreate extends modelAssociationUpdate {
-	association: associationCreate[]
 }
 
 export async function modelAssociationCreate(config: modelAssociationCreate) {
