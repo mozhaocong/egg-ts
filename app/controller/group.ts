@@ -8,9 +8,18 @@ const searchDataRule = {
 	id: { type: 'number', required: false },
 	...findParamsRule
 }
+const updateDataRule = {
+	id: { type: 'number', required: true },
+	...findParamsRule
+}
+const destroyParamsRule = {
+	id: { type: 'number', required: true }
+}
 
 export default class HomeController extends BaseController {
 	searchDataRule = searchDataRule
+	updateDataRule = updateDataRule
+	destroyParamsRule = destroyParamsRule
 	findParamsRule = findParamsRule
 	serviceModel = this.ctx.service.group
 }

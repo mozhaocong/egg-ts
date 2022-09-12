@@ -26,11 +26,11 @@ export default class BaseService extends Service {
 	getParamsRuleData = getParamsRuleData
 	simpleParamsRuleModelFindAll = simpleParamsRuleModelFindAll
 	getFindAllCountData = getFindAllCountData
-	customFindParamsMethod: customFindParamsMethod | null = null
+	customFindParamsMethod: customFindParamsMethod | null = null //自定义 findParams 方法
 	setFindAllConfig = {}
-	modelAssociationCreate = modelAssociationCreate
-	modelAssociationUpdate = modelAssociationUpdate
-	modelAssociationDestroy = modelAssociationDestroy
+	modelAssociationCreate = modelAssociationCreate //关联创建方法
+	modelAssociationUpdate = modelAssociationUpdate //关联更新方法
+	modelAssociationDestroy = modelAssociationDestroy //关联删除方法
 	appModel: ObjectMap = {}
 
 	async findAll() {
@@ -87,6 +87,10 @@ export default class BaseService extends Service {
 		}
 		const { body } = ctx.request
 		const data = getParamsRuleData(body, pramsRules)
+		console.log('data', data)
+		if (!isTrue(data)) {
+			throw { message: '删除数据不能为空', name: 'newThrow' }
+		}
 		const user = await appModel.destroy({ where: { ...data } })
 		return user
 	}

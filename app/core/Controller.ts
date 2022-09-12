@@ -9,10 +9,10 @@ export function returnFormat({ msg = '', code = 0, data = null }) {
 export default class BaseController extends Controller {
 	searchValidate = searchValidate
 	setSearchRule = setSearchRule
-	searchDataRule: ObjectMap = {}
-	findParamsRule: ObjectMap = {}
-	updateDataRule: ObjectMap = {}
-	destroyParamsRule: ObjectMap = {}
+	searchDataRule: ObjectMap = {} //查询的数据
+	findParamsRule: ObjectMap = {} //添加的数据
+	updateDataRule: ObjectMap = {} //更新的数据
+	destroyParamsRule: ObjectMap = {} //删除的数据
 	serviceModel: any = {}
 	public async findParams() {
 		const { ctx, success, searchValidate, setSearchRule, searchDataRule, serviceModel, notFound } = this

@@ -13,8 +13,11 @@ export default (app: Application) => {
 	router.get('/base/group/findAll', controller.group.findAll)
 	router.get('/base/group/findParams', controller.group.findParams)
 	router.post('/base/group/create', controller.group.create)
+	router.post('/base/group/update', controller.group.update)
+	router.post('/base/group/destroy', controller.group.destroy)
 	// 角色表
-	router.post('/base/role/create', controller.role.create)
+	router.get('/base/role/findAll', controller.role.findAll)
 	router.get('/base/role/findParams', controller.role.findParams)
+	router.post('/base/role/create', controller.role.create)
 	router.post('/base/role/update', controller.role.update)
 }
