@@ -28,9 +28,9 @@ export default class BaseService extends Service {
 	getFindAllCountData = getFindAllCountData
 	customFindParamsMethod: customFindParamsMethod | null = null //自定义 findParams 方法
 	setFindAllConfig = {}
-	modelAssociationCreate = modelAssociationCreate //关联创建方法
-	modelAssociationUpdate = modelAssociationUpdate //关联更新方法
-	modelAssociationDestroy = modelAssociationDestroy //关联删除方法
+	modelAssociationCreate = modelAssociationCreate //关联创建方法(多对多关系的，有关联表)
+	modelAssociationUpdate = modelAssociationUpdate //关联更新方法(多对多关系的，有关联表)
+	modelAssociationDestroy = modelAssociationDestroy //关联删除方法(多对多关系的，有关联表)
 	appModel: ObjectMap = {}
 
 	async findAll() {
