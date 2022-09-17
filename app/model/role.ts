@@ -9,7 +9,7 @@ export default (app) => {
 		updatedAt: DATE
 	})
 	role.associate = function () {
-		// 一个群组对应多个角色
+		// 一个角色对应一个群组
 		app.model.Role.Group = app.model.Role.belongsTo(app.model.Group, {
 			foreignKey: 'groupId',
 			targetKey: 'id',

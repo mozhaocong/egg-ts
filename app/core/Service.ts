@@ -27,7 +27,7 @@ export default class BaseService extends Service {
 	simpleParamsRuleModelFindAll = simpleParamsRuleModelFindAll
 	getFindAllCountData = getFindAllCountData
 	customFindParamsMethod: customFindParamsMethod | null = null //自定义 findParams 方法
-	setFindAllConfig = {}
+	setFindParamsConfig = {}
 	modelAssociationCreate = modelAssociationCreate //关联创建方法(多对多关系的，有关联表)
 	modelAssociationUpdate = modelAssociationUpdate //关联更新方法(多对多关系的，有关联表)
 	modelAssociationDestroy = modelAssociationDestroy //关联删除方法(多对多关系的，有关联表)
@@ -41,7 +41,7 @@ export default class BaseService extends Service {
 		return await appModel.findAll()
 	}
 	async findParams(findSearchParamsRule) {
-		const { simpleParamsRuleModelFindAll, appModel, ctx, customFindParamsMethod, setFindAllConfig } = this
+		const { simpleParamsRuleModelFindAll, appModel, ctx, customFindParamsMethod, setFindParamsConfig } = this
 		if (!isTrue(appModel)) {
 			throw { message: 'appModel 不能为空', name: 'newThrow' }
 		}
@@ -56,7 +56,7 @@ export default class BaseService extends Service {
 			that: this,
 			model: appModel,
 			paramsRule: findSearchParamsRule,
-			findAllConfig: setFindAllConfig
+			findAllConfig: setFindParamsConfig
 		})
 	}
 	async create(pramsRules) {
