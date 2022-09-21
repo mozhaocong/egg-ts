@@ -30,20 +30,30 @@ import BaseService from '../core/Service'
 
 export default class UserService extends BaseService {
 	appModel = this.app.model.User
-	async findParams() {
-		// const { ctx, modelFindAll, getDefaultPaginationData, getParamsRuleData } = this
-		// const { query } = ctx.request
-		// const paginationData = getDefaultPaginationData(query)
-		// const data = getParamsRuleData(query, findSearchParamsRule)
-		// const returnData = await modelFindAll(this.app.model.User, { where: { ...data } }, paginationData)
-		const returnData = this.app.model.User.findAll({
-			// attributes: { exclude: ['age'] }
-			include: {
-				model: this.ctx.model.Role,
-				as: 'roleList'
-			}
-			// raw: true
-		})
+	async findParams(findSearchParamsRule) {
+		const { ctx, modelFindAll, getDefaultPaginationData, getParamsRuleData } = this
+		const { query } = ctx.request
+		const paginationData = getDefaultPaginationData(query)
+		const data = getParamsRuleData(query, findSearchParamsRule)
+		const returnData = await modelFindAll(
+			this.app.model.User,
+			{
+				where: { ...data },
+				include: {
+					model: this.ctx.model.Role,
+					as: 'roleList'
+				}
+			},
+			paginationData
+		)
+		// const returnData = this.app.model.User.findAll({
+		// 	// attributes: { exclude: ['age'] }
+		// 	include: {
+		// 		model: this.ctx.model.Role,
+		// 		as: 'roleList'
+		// 	}
+		// 	// raw: true
+		// })
 		return returnData
 	}
 
