@@ -10,6 +10,7 @@ const searchDataRule = {
 }
 const updateDataRule = {
 	id: { type: 'number', required: true },
+	level: { type: 'string', required: true },
 	...findParamsRule
 }
 const destroyParamsRule = {
@@ -22,4 +23,9 @@ export default class HomeController extends BaseController {
 	destroyParamsRule = destroyParamsRule
 	findParamsRule = findParamsRule
 	serviceModel = this.ctx.service.group
+	public async getGroupTree() {
+		const { serviceModel, success } = this
+		const data = await serviceModel?.getGroupTree()
+		success(data)
+	}
 }

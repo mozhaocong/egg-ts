@@ -34,7 +34,7 @@ export function setObjetToObject(data: ObjectMap, setData: ObjectMap) {
 		}
 	}
 }
-// 设置递归数组
+// 返回新的递归数组
 export function setArrayData(item: any[], call: (callItem: ObjectMap) => ObjectMap): ObjectMap[] {
 	return item.map((res) => {
 		if (isTrue(res.children)) {
@@ -118,4 +118,23 @@ export function objectRepeatObject(
 			callback(itemAKey, itemA[itemAKey], itemB[itemAKey])
 		}
 	}
+}
+
+export function setTreeData(item: {
+	data: ObjectMap[]
+	idKey?: string
+	pidKey?: string
+	childrenName?: string
+	setPushHooks?: (father: ObjectMap, children: any[]) => void
+}) {
+	const { data, idKey = 'id', pidKey = 'pId', childrenName = 'children', setPushHooks } = item
+	return data.filter((father) => {
+		const children = data.filter((item) => item[pidKey] === father[idKey])
+		if (isTrue(setPushHooks) && isTrue(children)) {
+			// @ts-ignore
+			setPushHooks(father, children)
+		}
+		father[childrenName] = children && children.length ? children : ''
+		return data.every((e) => e[idKey] != father[pidKey])
+	})
 }

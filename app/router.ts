@@ -15,6 +15,7 @@ export default (app: Application) => {
 	router.post('/base/group/create', controller.group.create)
 	router.post('/base/group/update', controller.group.update)
 	router.post('/base/group/destroy', controller.group.destroy)
+	router.get('/base/group/getGroupTree', controller.group.getGroupTree)
 	// 角色表
 	router.get('/base/role/findAll', controller.role.findAll)
 	router.get('/base/role/findParams', controller.role.findParams)

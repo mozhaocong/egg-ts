@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
 // app.js
 class AppBootHook {
@@ -42,10 +41,12 @@ class AppBootHook {
 
 	async didReady() {
 		// 应用已经启动完毕
-		// const ctx = await this.app.createAnonymousContext()
-		// // await ctx.service.Biz.request()
-		//
-		// console.log(ctx)
+		const ctx = await this.app.createAnonymousContext()
+		ctx.service.group.initRedisGroupTree()
+		// console.log('JSON.stringify(data)', JSON.stringify(data), JSON.parse(JSON.stringify(data)))
+		// const jsonData = JSON.parse(JSON.stringify(data))
+		// const treeData = setTreeData({ data: jsonData })
+		// console.log('treeData', JSON.stringify(treeData))
 		// console.log(ctx.validate)
 	}
 

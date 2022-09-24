@@ -33,14 +33,14 @@ export default class BaseService extends Service {
 	modelAssociationDestroy = modelAssociationDestroy //关联删除方法(多对多关系的，有关联表)
 	appModel: ObjectMap = {}
 
-	async findAll() {
+	findAll = async () => {
 		const { appModel } = this
 		if (!isTrue(appModel)) {
 			throw { message: 'appModel 不能为空', name: 'newThrow' }
 		}
 		return await appModel.findAll()
 	}
-	async findParams(findSearchParamsRule) {
+	findParams = async (findSearchParamsRule) => {
 		const { simpleParamsRuleModelFindAll, appModel, ctx, customFindParamsMethod, setFindParamsConfig } = this
 		if (!isTrue(appModel)) {
 			throw { message: 'appModel 不能为空', name: 'newThrow' }
@@ -59,7 +59,7 @@ export default class BaseService extends Service {
 			findAllConfig: setFindParamsConfig
 		})
 	}
-	async create(pramsRules) {
+	create = async (pramsRules) => {
 		const { ctx, getParamsRuleData, appModel } = this
 		if (!isTrue(appModel)) {
 			throw { message: 'appModel 不能为空', name: 'newThrow' }
@@ -70,13 +70,15 @@ export default class BaseService extends Service {
 		return user
 	}
 
-	async update(pramsRules) {
+	update = async (pramsRules) => {
+		console.log('pramsRules', pramsRules)
 		const { ctx, getParamsRuleData, appModel } = this
 		if (!isTrue(appModel)) {
 			throw { message: 'appModel 不能为空', name: 'newThrow' }
 		}
 		const { body } = ctx.request
 		const data = getParamsRuleData(body, pramsRules) || {}
+		console.log('data', data)
 		const user = await appModel.update(data, { where: { id: data.id } })
 		return user
 	}

@@ -4,6 +4,7 @@ export default (app) => {
 		id: { type: INTEGER, primaryKey: true, autoIncrement: true },
 		pId: { type: INTEGER, defaultValue: 0, comment: '上级Id,最高级为0' },
 		groupName: { type: STRING(30), unique: true, allowNull: false, comment: '群组名称' },
+		level: { type: STRING(30), allowNull: false, comment: '类别' },
 		createdAt: DATE,
 		updatedAt: DATE
 	})
