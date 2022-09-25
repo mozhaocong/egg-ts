@@ -1,17 +1,22 @@
 import BaseController from '../core/Controller'
 
-export const findParamsRule = {
+const defaultParamsRule = {
 	pId: { type: 'number', required: false },
 	groupName: { type: 'string', required: true }
 }
+
+export const findParamsRule = {
+	...defaultParamsRule,
+	pLevel: { type: 'string', required: true }
+}
 const searchDataRule = {
 	id: { type: 'number', required: false },
-	...findParamsRule
+	...defaultParamsRule
 }
 const updateDataRule = {
 	id: { type: 'number', required: true },
 	level: { type: 'string', required: true },
-	...findParamsRule
+	...defaultParamsRule
 }
 const destroyParamsRule = {
 	id: { type: 'number', required: true }
